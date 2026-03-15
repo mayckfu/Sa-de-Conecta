@@ -1,0 +1,233 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* ─── Design System Variables ──────────────────────────────── */
+:root {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Poppins', system-ui, sans-serif;
+
+  /* Design System Tokens */
+  --arc-bg: #f8fafc;
+  --arc-dark: #0f172a; /* Slate 900 for maximum contrast */
+  --arc-text-main: #1e293b; /* Slate 800 */
+  --arc-text-muted: #475569; /* Slate 600 */
+  --arc-glass-white: rgba(255, 255, 255, 0.7);
+  --arc-glass-border: rgba(255, 255, 255, 0.8);
+  --arc-radius: 1rem;
+  --arc-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Arc Ethereal Palette (Reference: Arc Image) */
+  --color-sky: #CAE9F5;
+  --color-lavender: #E9E3FB;
+  --color-blush: #F9D9D9; 
+  --color-cream: #FFF1D0;
+}
+
+/* ─── Reset & Base ──────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-size: 16px;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #1e293b; /* slate-800 */
+  background-color: transparent;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ─── Gradient Blob Background (Arc-style) ──────────────────── */
+/* Arc Browser Style Background Blobs */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-color: var(--arc-bg);
+  background-image: 
+    radial-gradient(at 15% 15%, var(--color-sky) 0px, transparent 45%),
+    radial-gradient(at 85% 15%, var(--color-lavender) 0px, transparent 45%),
+    radial-gradient(at 15% 85%, var(--color-blush) 0px, transparent 45%),
+    radial-gradient(at 85% 85%, var(--color-cream) 0px, transparent 45%);
+  filter: blur(100px);
+  opacity: 0.9;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  backdrop-filter: blur(0px);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ─── Glass Utility Classes ─────────────────────────────────── */
+@layer utilities {
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+
+  .glass-dark {
+    background: linear-gradient(135deg, rgba(75, 65, 115, 0.75), rgba(50, 60, 85, 0.72)); /* Gradient Violet→Slate (claro) */
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  }
+
+  .glass-sidebar {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-right: 1px solid rgba(255, 255, 255, 0.6);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+
+  .glass-header {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  .blob-gradient {
+    background:
+      radial-gradient(ellipse 80% 60% at 10% 10%, #F7E9C9 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 90% 0%,  #E8E0FF 0%, transparent 55%),
+      radial-gradient(ellipse 70% 60% at 80% 90%, #D9E9FF 0%, transparent 55%),
+      radial-gradient(ellipse 60% 50% at 10% 85%, #FADFD8 0%, transparent 55%),
+      #f5f0fb;
+  }
+
+  .shadow-glow-purple {
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4), 0 0 40px rgba(139, 92, 246, 0.2);
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+}
+
+/* ─── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
+
+/* ─── Animations ────────────────────────────────────────────── */
+@keyframes float-blob {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -15px) scale(1.05); }
+  66% { transform: translate(-10px, 20px) scale(0.97); }
+}
+
+@keyframes blob {
+  0% { transform: translate(0px, 0px) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+  100% { transform: translate(0px, 0px) scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animate-shake {
+  animation: shake 0.2s ease-in-out 0s 2;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+  50% { transform: scale(1.1); opacity: 0.9; filter: brightness(1.2); }
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  15% { transform: scale(1.15); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-heartbeat-fast {
+  animation: heartbeat 1.2s ease-in-out infinite;
+}
+
+.animate-heartbeat {
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+.animate-heartbeat-slow {
+  animation: heartbeat 3.5s ease-in-out infinite;
+}
+
+.shadow-glow-emerald {
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.6), 0 0 30px rgba(16, 185, 129, 0.3);
+}
+
+.shadow-glow-violet {
+  box-shadow: 0 0 15px rgba(167, 139, 250, 0.6), 0 0 30px rgba(167, 139, 250, 0.3);
+}
+
+.shadow-glow-red {
+  box-shadow: 0 0 15px rgba(248, 113, 113, 0.6), 0 0 30px rgba(248, 113, 113, 0.3);
+}
+
+/* ─── Focus ─────────────────────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ─── Selection ─────────────────────────────────────────────── */
+::selection {
+  background: rgba(232, 224, 255, 0.7);
+  color: #1a1523;
+}
