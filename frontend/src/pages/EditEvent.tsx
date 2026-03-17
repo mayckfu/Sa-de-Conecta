@@ -55,6 +55,7 @@ export const EditEvent: React.FC = () => {
     reset,
     formState: { errors }
   } = useForm<EventoFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(eventoSchema) as any,
     defaultValues: {
       nome: '',
@@ -237,7 +238,7 @@ export const EditEvent: React.FC = () => {
           if (uploadError) throw new Error(`Upload: ${uploadError.message}`);
           if (uploadData?.error) throw new Error(`Drive: ${uploadData.error}`);
           console.log('Upload concluído com sucesso');
-        } catch (errorFunc: any) {
+        } catch (errorFunc: unknown) {
           console.error('Erro na função de upload:', errorFunc);
           throw errorFunc;
         }
@@ -252,15 +253,16 @@ export const EditEvent: React.FC = () => {
       await refreshEvents();
       showToast('Alterações salvas com sucesso!', 'success');
       navigate('/gestao/eventos');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao salvar edições:', error);
-      showToast(error.message || 'Erro ao salvar as edições.', 'error');
+      // @ts-expect-error - error is unknown
+      showToast(error?.message || 'Erro ao salvar as edições.', 'error');
     } finally {
       setIsUploading(false);
     }
   };
 
-  const onValidationError = (errors: any) => {
+  const onValidationError = (errors: Record<string, unknown>) => {
     console.log('Erros de validação na edição:', errors);
     const firstErrorField = Object.keys(errors)[0];
     
@@ -541,6 +543,7 @@ export const EditEvent: React.FC = () => {
                                 </div>
                                 <input 
                                   type="checkbox" 
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                   {...register(`coffee.${item.id}` as any)}
                                   className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-400/30" 
                                 />
@@ -600,6 +603,7 @@ export const EditEvent: React.FC = () => {
                           </div>
                           <input 
                             type="checkbox" 
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             {...register(`materiais.${item.id}` as any)}
                             className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-400/30" 
                           />

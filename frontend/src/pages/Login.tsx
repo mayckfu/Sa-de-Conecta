@@ -128,9 +128,10 @@ export const Login: React.FC = () => {
         setLoading(false);
         return;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Auth error:', err);
-      setError(err.message || 'Ocorreu um erro na autenticação');
+      // @ts-expect-error err is unknown
+      setError(err?.message || 'Ocorreu um erro na autenticação');
     } finally {
       setLoading(false);
     }

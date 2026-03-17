@@ -15,7 +15,7 @@ export interface Logistica {
   frutas: boolean;
   biscoitos: boolean;
   observacoes: string | null;
-  detalhes: any; // jsonb
+  detalhes: Record<string, unknown> | null; // jsonb
 }
 
 export interface Material {
@@ -28,7 +28,7 @@ export interface Material {
   tenda: boolean;
   mesas: boolean;
   cadeiras: boolean;
-  detalhes: any; // jsonb
+  detalhes: Record<string, unknown> | null; // jsonb
 }
 
 export interface Documento {

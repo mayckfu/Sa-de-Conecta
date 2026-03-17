@@ -13,10 +13,15 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 import { cn } from '../utils/cn';
 import { useEventos } from '../hooks/useEventos';
+import type { Documento } from '../types/database';
+
+interface DocumentoComEvento extends Documento {
+  eventos?: { nome: string } | null;
+}
 
 export const Documents: React.FC = () => {
   const { searchTerm } = useEventos();
-  const [docs, setDocs] = React.useState<any[]>([]);
+  const [docs, setDocs] = React.useState<DocumentoComEvento[]>([]);
   const [stats, setStats] = React.useState([
     { label: 'Total Enviado', value: '0', icon: FileText, gradient: 'from-violet-400 to-indigo-500', glow: 'shadow-glow-purple' },
     { label: 'Pendentes', value: '0', icon: Clock, gradient: 'from-amber-400 to-orange-500', glow: 'shadow-[0_0_16px_rgba(251,191,36,0.25)]' },

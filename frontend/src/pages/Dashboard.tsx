@@ -85,7 +85,7 @@ export const Dashboard: React.FC = () => {
         const now = new Date();
         now.setHours(now.getHours() - 2); // Eventos que começaram há no máximo 2 horas ainda aparecem
 
-        const futuros = eventosNorm.filter((e: any) => {
+        const futuros = eventosNorm.filter((e: Evento) => {
           if (!e.data || !e.hora_inicio || e.situacao === 'cancelado') return false;
           
           const [ano, mes, dia] = e.data.split('-');
@@ -108,7 +108,7 @@ export const Dashboard: React.FC = () => {
         // Encontrar o evento mais próximo que tenha alguma solicitação de logística ou material
         const proximoComLogistica = futuros.find((e: Evento) => 
           e.logistica?.[0]?.tem_coffee_break || 
-          Object.values(e.materiais?.[0] || {}).some((val: any) => val === true && typeof val === 'boolean')
+          Object.values(e.materiais?.[0] || {}).some((val: unknown) => val === true && typeof val === 'boolean')
         );
 
         setUpcomingLogistics(proximoComLogistica || futuros[0] || null);
@@ -319,7 +319,15 @@ export const Dashboard: React.FC = () => {
                       <Sparkles className="w-3 h-3 text-violet-400" /> Observações Logísticas
                     </p>
                     <p className="text-[11px] text-white/70 italic leading-relaxed font-medium">
-                      "{upcomingLogistics.logistica?.[0]?.observacoes || upcomingLogistics.materiais?.[0]?.detalhes}"
+                      {(() => {
+                        const obsLog = upcomingLogistics.logistica?.[0]?.observacoes;
+                        const detMat = upcomingLogistics.materiais?.[0]?.detalhes;
+                        if (obsLog) return `"${obsLog}"`;
+                        if (detMat) {
+                           return `"${typeof detMat === 'string' ? detMat : JSON.stringify(detMat)}"`;
+                        }
+                        return '';
+                      })()}
                     </p>
                   </div>
                 )}

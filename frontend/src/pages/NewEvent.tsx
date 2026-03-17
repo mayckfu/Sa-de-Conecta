@@ -52,6 +52,7 @@ export const NewEvent: React.FC = () => {
     watch,
     formState: { errors }
   } = useForm<EventoFormData>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     resolver: zodResolver(eventoSchema) as any,
     defaultValues: {
       nome: '',
@@ -194,15 +195,16 @@ export const NewEvent: React.FC = () => {
       await refreshEvents();
       showToast('Evento e documentos salvos com sucesso!', 'success');
       navigate('/gestao/eventos');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erro ao salvar evento:', error);
-      showToast(error.message || 'Erro ao salvar o evento.', 'error');
+      // @ts-expect-error - error is unknown
+      showToast(error?.message || 'Erro ao salvar o evento.', 'error');
     } finally {
       setIsUploading(false);
     }
   };
 
-  const onValidationError = (errors: any) => {
+  const onValidationError = (errors: Record<string, unknown>) => {
     console.log('Erros de validação encontrados:', errors);
     const firstErrorField = Object.keys(errors)[0];
     
@@ -477,6 +479,7 @@ export const NewEvent: React.FC = () => {
                                 </div>
                                 <input 
                                   type="checkbox" 
+                                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                                   {...register(`coffee.${item.id}` as any)}
                                   className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-400/30" 
                                 />
@@ -536,6 +539,7 @@ export const NewEvent: React.FC = () => {
                           </div>
                           <input 
                             type="checkbox" 
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             {...register(`materiais.${item.id}` as any)}
                             className="w-4 h-4 rounded border-slate-300 text-violet-600 focus:ring-violet-400/30" 
                           />

@@ -36,15 +36,17 @@ export const EventosProvider: React.FC<{ children: React.ReactNode }> = ({ child
       
       if (error) throw error;
       
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const eventosNorm = (data as any[] || []).map(e => ({
         ...e,
         logistica: e.logistica ? (Array.isArray(e.logistica) ? e.logistica : [e.logistica]) : [],
         materiais: e.materiais ? (Array.isArray(e.materiais) ? e.materiais : [e.materiais]) : [],
       }));
       setEvents(eventosNorm as Evento[]);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('[EventosContext] Erro ao buscar eventos:', err);
-      setError(err.message || 'Falha ao buscar eventos');
+      // @ts-expect-error - err is unknown
+      setError(err?.message || 'Falha ao buscar eventos');
     } finally {
       setLoading(false);
     }
@@ -127,6 +129,7 @@ export const EventosProvider: React.FC<{ children: React.ReactNode }> = ({ child
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useEventos = () => {
   const context = useContext(EventosContext);
   if (context === undefined) {

@@ -1,10 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../services/supabase';
-import type { Profile, UserRole, UserStatus } from '../types/database';
-
-// Exporting to avoid breaking other files that might be importing these from here temporarily
-export type { UserRole, UserStatus, Profile };
+import type { Profile } from '../types/database';
 
 interface AuthContextType {
   user: User | null;
@@ -118,6 +115,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

@@ -31,6 +31,7 @@ export const EventDetail: React.FC = () => {
   const navigate = useNavigate();
   const { profile } = useAuth();
   const { refreshEvents } = useEventos();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [evento, setEvento] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
   const [isUpdating, setIsUpdating] = React.useState(false);
@@ -192,19 +193,50 @@ export const EventDetail: React.FC = () => {
         </div>
         {profile?.role !== 'visitante' && (
           <div className="flex items-center gap-2.5">
-            <button 
-              onClick={() => navigate(`/gestao/editar-evento/${id}`)}
-              className="px-5 py-2.5 glass-card rounded-xl text-sm font-medium text-slate-600 hover:bg-white/80 transition-all duration-200"
-            >
-              Editar Registro
-            </button>
-            <button
-              onClick={() => handleUpdateStatus('confirmado')}
-              disabled={isUpdating || evento.situacao === 'confirmado'}
-              className="px-5 py-2.5 bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-sm font-semibold rounded-xl shadow-glow-purple hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:hover:-translate-y-0"
-            >
-              {isUpdating && evento.situacao !== 'confirmado' ? '...' : 'Confirmar Presenças'}
-            </button>
+            {showDeleteConfirm ? (
+              <div className="flex items-center gap-2 animate-in fade-in zoom-in duration-200 bg-red-50 p-1.5 rounded-xl border border-red-100">
+                <span className="text-xs font-bold text-red-600 ml-2 mr-1">Excluir definitivamente?</span>
+                <button
+                  onClick={handleDeleteEvent}
+                  disabled={isDeleting}
+                  className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-bold hover:bg-red-700 transition-all shadow-glow-red disabled:opacity-50"
+                >
+                  {isDeleting ? 'Excluindo...' : 'Sim'}
+                </button>
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  className="px-3 py-1.5 bg-white text-slate-600 rounded-lg text-xs font-bold hover:bg-slate-100 transition-all shadow-sm border border-slate-200"
+                >
+                  Cancelar
+                </button>
+              </div>
+            ) : (
+              <>
+                <button 
+                  onClick={() => navigate(`/gestao/editar-evento/${id}`)}
+                  className="px-5 py-2.5 glass-card rounded-xl text-sm font-medium text-slate-600 hover:bg-white/80 transition-all duration-200"
+                >
+                  Editar Registro
+                </button>
+                <button
+                  onClick={() => handleUpdateStatus('confirmado')}
+                  disabled={isUpdating || evento.situacao === 'confirmado'}
+                  className="px-5 py-2.5 bg-gradient-to-br from-violet-500 to-indigo-500 text-white text-sm font-semibold rounded-xl shadow-glow-purple hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:hover:-translate-y-0"
+                >
+                  {isUpdating && evento.situacao !== 'confirmado' ? '...' : 'Confirmar Presenças'}
+                </button>
+                {profile?.role === 'admin' && (
+                  <button
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="p-2.5 bg-red-50 text-red-600 hover:bg-red-100 border border-red-100 rounded-xl transition-all duration-200 shadow-sm"
+                    title="Excluir Evento"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>
@@ -344,6 +376,8 @@ export const EventDetail: React.FC = () => {
             </h3>
             {evento.documentos && evento.documentos.length > 0 ? (
               <div className="space-y-3 relative">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {evento.documentos.map((doc: any) => (
                   <div key={doc.id} className="p-4 bg-white/[0.06] border border-white/[0.08] rounded-xl hover:bg-white/[0.1] hover:border-violet-400/20 transition-all duration-200 cursor-pointer group/doc">
                     <div className="flex justify-between items-start mb-2">
@@ -458,6 +492,7 @@ export const EventDetail: React.FC = () => {
             </div>
           </div>
           
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
           {evento.logs_eventos && evento.logs_eventos.sort((a: any, b: any) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()).map((log: any) => (
             <div key={log.id} className="relative pl-6 animate-in fade-in slide-in-from-left-4 duration-500">
               <div className={cn(

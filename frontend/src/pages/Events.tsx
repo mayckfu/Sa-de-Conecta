@@ -33,6 +33,7 @@ import { MonthCalendarView } from '../components/events/MonthCalendarView';
 import { WeekCalendarView } from '../components/events/WeekCalendarView';
 import { DayCalendarView } from '../components/events/DayCalendarView';
 import { useEventos } from '../hooks/useEventos';
+import type { Evento } from '../types/database';
 
 type ViewMode = 'Mês' | 'Semana' | 'Dia';
 
@@ -297,7 +298,7 @@ export const Events: React.FC = () => {
             });
             const totalEventos = eventosMes.length;
             const confirmados = eventosMes.filter(e => e.situacao === 'confirmado').length;
-            const participantes = eventosMes.reduce((acc: number, e: any) => acc + (e.participantes_previstos || 0), 0);
+            const participantes = eventosMes.reduce((acc: number, e: Evento) => acc + (e.participantes_previstos || 0), 0);
             const cancelados = eventosMes.filter(e => e.situacao === 'cancelado').length;
 
             return (

@@ -182,7 +182,7 @@ export const AdminUsers: React.FC = () => {
                       <select 
                         className="bg-transparent border-none text-xs font-bold text-slate-600 focus:ring-0 cursor-pointer hover:text-violet-600"
                         value={u.role}
-                        onChange={(e) => updateRole(u.id, e.target.value as any)}
+                        onChange={(e) => updateRole(u.id, e.target.value as 'admin' | 'cadastrador' | 'visitante')}
                       >
                         <option value="visitante">Visitante</option>
                         <option value="cadastrador">Cadastrador</option>
