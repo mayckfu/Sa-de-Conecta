@@ -52,21 +52,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Check active sessions
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setLoading(false);
-      }
-    });
-
-    // Listen for auth changes
+    // Single source of truth: onAuthStateChange fires INITIAL_SESSION immediately
+    // with the current session (or null), so we don't need a separate getSession() call.
+    // This avoids the race condition where both would call fetchProfile() / setLoading(false)
+    // causing a flicker / blank page after login.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+
+      if (currentUser) {
+        // fetchProfile handles setLoading(false) in its finally block
+        fetchProfile(currentUser.id);
       } else {
         setProfile(null);
         setLoading(false);
