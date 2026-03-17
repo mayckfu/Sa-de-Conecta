@@ -52,16 +52,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
-    // Single source of truth: onAuthStateChange fires INITIAL_SESSION immediately
-    // with the current session (or null), so we don't need a separate getSession() call.
-    // This avoids the race condition where both would call fetchProfile() / setLoading(false)
-    // causing a flicker / blank page after login.
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // initializedRef prevents double fetchProfile when both getSession() and
+    // onAuthStateChange fire INITIAL_SESSION at startup (Supabase v2 behavior).
+    // getSession() is mandatory for production (Vercel) where onAuthStateChange
+    // may fire asynchronously causing an indefinite loading state.
+    let initializedRef = false;
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      initializedRef = true;
       const currentUser = session?.user ?? null;
       setUser(currentUser);
-
       if (currentUser) {
-        // fetchProfile handles setLoading(false) in its finally block
+        fetchProfile(currentUser.id);
+      } else {
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      // Skip the first event if getSession() already handled initialization
+      if (!initializedRef) {
+        initializedRef = true;
+        return;
+      }
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
         fetchProfile(currentUser.id);
       } else {
         setProfile(null);
