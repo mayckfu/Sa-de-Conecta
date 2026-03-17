@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 import { supabase } from '../services/supabase';
+import { useAuth } from '../hooks/useAuth';
 
 export const Login: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -27,6 +28,14 @@ export const Login: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Auth-driven navigation: wait for useAuth to confirm the user is set
+  // before navigating. This prevents the race condition where navigate fires
+  // before onAuthStateChange has updated the auth context.
+  useEffect(() => {
+    if (user) navigate('/gestao', { replace: true });
+  }, [user, navigate]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -101,6 +110,7 @@ export const Login: React.FC = () => {
         } else {
           localStorage.removeItem('remembered_email');
         }
+        // Navigation is handled by the useEffect above that watches user
       } else {
         const { error: signUpError } = await supabase.auth.signUp({
           email: formData.email,
@@ -118,8 +128,6 @@ export const Login: React.FC = () => {
         setLoading(false);
         return;
       }
-
-      navigate('/gestao');
     } catch (err: any) {
       console.error('Auth error:', err);
       setError(err.message || 'Ocorreu um erro na autenticação');

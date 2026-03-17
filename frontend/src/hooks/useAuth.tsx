@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { supabase } from '../services/supabase';
 import type { Profile, UserRole, UserStatus } from '../types/database';
@@ -21,24 +21,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Ref to track the last user ID we fetched a profile for.
+  // Prevents redundant fetchProfile calls when multiple auth events fire for the same user.
+  const lastFetchedUserId = useRef<string | null>(null);
+
   const fetchProfile = async (userId: string) => {
+    // Guard: skip if we already fetched for this user to prevent infinite loops
+    if (lastFetchedUserId.current === userId) {
+      setLoading(false);
+      return;
+    }
+    lastFetchedUserId.current = userId;
+
     try {
-      console.log('[useAuth] Fetching profile for user:', userId);
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
 
-      if (error) {
-        console.error('[useAuth] Error fetching profile:', error);
-        throw error;
-      }
-
-      console.log('[useAuth] Profile loaded:', data);
+      if (error) throw error;
       setProfile(data);
     } catch (err) {
-      console.error('[useAuth] Profile fetch failed, user will have null profile:', err);
+      console.error('[useAuth] Profile fetch failed:', err);
       setProfile(null);
     } finally {
       setLoading(false);
@@ -47,19 +52,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshProfile = async () => {
     if (user) {
+      // Reset ref to force a fresh fetch
+      lastFetchedUserId.current = null;
       await fetchProfile(user.id);
     }
   };
 
   useEffect(() => {
-    // initializedRef prevents double fetchProfile when both getSession() and
-    // onAuthStateChange fire INITIAL_SESSION at startup (Supabase v2 behavior).
-    // getSession() is mandatory for production (Vercel) where onAuthStateChange
-    // may fire asynchronously causing an indefinite loading state.
-    let initializedRef = false;
-
+    // getSession() resolves the initial session synchronously/reliably in all environments
+    // (local, Vercel, Edge). This is our single initialization point.
     supabase.auth.getSession().then(({ data: { session } }) => {
-      initializedRef = true;
       const currentUser = session?.user ?? null;
       setUser(currentUser);
       if (currentUser) {
@@ -69,20 +71,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      // Skip the first event if getSession() already handled initialization
-      if (!initializedRef) {
-        initializedRef = true;
+    // onAuthStateChange listens to SUBSEQUENT changes only.
+    // INITIAL_SESSION is skipped because getSession() already handles it.
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Skip the initial event — getSession() handles it
+      if (event === 'INITIAL_SESSION') return;
+
+      const currentUser = session?.user ?? null;
+
+      if (event === 'SIGNED_OUT') {
+        // Clear state immediately on logout
+        lastFetchedUserId.current = null;
+        setUser(null);
+        setProfile(null);
+        setLoading(false);
         return;
       }
-      const currentUser = session?.user ?? null;
+
+      // SIGNED_IN, TOKEN_REFRESHED, USER_UPDATED, etc.
       setUser(currentUser);
-      if (currentUser) {
+
+      if (currentUser && currentUser.id !== lastFetchedUserId.current) {
+        // New user or different user — fetch their profile
+        setLoading(true);
+        lastFetchedUserId.current = null; // reset so fetchProfile runs
         fetchProfile(currentUser.id);
-      } else {
+      } else if (!currentUser) {
+        lastFetchedUserId.current = null;
         setProfile(null);
         setLoading(false);
       }
+      // If same user (TOKEN_REFRESHED) → do nothing, profile already loaded
     });
 
     return () => subscription.unsubscribe();
