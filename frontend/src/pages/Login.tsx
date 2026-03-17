@@ -69,7 +69,7 @@ export const Login: React.FC = () => {
 
         const { data, error } = await supabase
           .from('eventos')
-          .select('situacao, participantes')
+          .select('situacao, participantes_previstos')
           .gte('data', startOfMonth)
           .lte('data', endOfMonth);
 
@@ -78,7 +78,7 @@ export const Login: React.FC = () => {
         if (data) {
           const planned = data.length;
           const confirmed = data.filter(e => e.situacao === 'confirmado').length;
-          const participants = data.reduce((acc, curr) => acc + (curr.participantes || 0), 0);
+          const participants = data.reduce((acc, curr) => acc + (curr.participantes_previstos || 0), 0);
           
           setStats({ planned, confirmed, participants });
         }
