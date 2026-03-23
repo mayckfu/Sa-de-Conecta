@@ -8,7 +8,8 @@ import {
   MoreVertical,
   CheckCircle2,
   XCircle,
-  Clock
+  Clock,
+  Trash2
 } from 'lucide-react';
 import { cn } from '../utils/cn';
 
@@ -29,6 +30,7 @@ export const AdminUsers: React.FC = () => {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     // Redirect if not admin (and auth is loaded)
@@ -86,6 +88,33 @@ export const AdminUsers: React.FC = () => {
       setUsers(users.map(u => u.id === userId ? { ...u, role } : u));
     } catch (err) {
       console.error('Error updating role:', err);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    // Prevent deleting self
+    if (userId === profile?.id) {
+       alert('Você não pode excluir sua própria conta.');
+       return;
+    }
+
+    if (!window.confirm('TEM CERTEZA? Esta ação excluirá permanentemente o usuário e todo o seu ACESSO ao sistema. Esta ação não pode ser desfeita.')) {
+       return;
+    }
+
+    setIsDeleting(userId);
+    try {
+      const { error } = await supabase.rpc('delete_user_base', { user_id: userId });
+      
+      if (error) throw error;
+      
+      setUsers(users.filter(u => u.id !== userId));
+      alert('Usuário excluído com sucesso.');
+    } catch (err) {
+      console.error('Error deleting user:', err);
+      alert('Erro ao excluir usuário. Verifique se você tem permissão ou se o usuário ainda existe.');
+    } finally {
+      setIsDeleting(null);
     }
   };
 
@@ -222,6 +251,18 @@ export const AdminUsers: React.FC = () => {
                             </button>
                           </>
                         )}
+                        <button 
+                          onClick={() => handleDeleteUser(u.id)}
+                          disabled={isDeleting === u.id || u.id === profile?.id}
+                          className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30"
+                          title="Excluir Usuário"
+                        >
+                          {isDeleting === u.id ? (
+                            <div className="w-4 h-4 border-2 border-red-500/30 border-t-red-500 rounded-full animate-spin" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
                         <button className="p-2 text-slate-400 hover:bg-slate-50 rounded-lg transition-colors">
                           <MoreVertical className="w-4 h-4" />
                         </button>
