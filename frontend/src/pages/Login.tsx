@@ -64,23 +64,22 @@ export const Login: React.FC = () => {
       try {
         setStatsLoading(true);
         const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().split('T')[0];
+        const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().split('T')[0];
 
-        const { data, error } = await supabase
-          .from('eventos')
-          .select('situacao, participantes_previstos')
-          .gte('data', startOfMonth)
-          .lte('data', endOfMonth);
+        const { data, error } = await supabase.rpc('get_dashboard_stats', {
+          start_date: startOfMonth,
+          end_date: endOfMonth
+        });
 
         if (error) throw error;
 
         if (data) {
-          const planned = data.length;
-          const confirmed = data.filter(e => e.situacao === 'confirmado').length;
-          const participants = data.reduce((acc, curr) => acc + (curr.participantes_previstos || 0), 0);
-          
-          setStats({ planned, confirmed, participants });
+          setStats({ 
+            planned: data.planned || 0, 
+            confirmed: data.confirmed || 0, 
+            participants: data.participants || 0 
+          });
         }
       } catch (err) {
         console.error('Error fetching login stats:', err);
