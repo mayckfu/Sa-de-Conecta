@@ -17,7 +17,6 @@ export interface Logistica {
   observacoes: string | null;
   detalhes: Record<string, unknown> | null; // jsonb
 }
-
 export interface Material {
   id: string;
   evento_id: string;
@@ -28,6 +27,12 @@ export interface Material {
   tenda: boolean;
   mesas: boolean;
   cadeiras: boolean;
+  notebook: boolean;
+  logistica: boolean;
+  cafe: boolean;
+  descartaveis_gerais: boolean;
+  observacoes: string | null;
+  outros: string | null;
   detalhes: Record<string, unknown> | null; // jsonb
 }
 

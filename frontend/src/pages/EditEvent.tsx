@@ -70,7 +70,7 @@ export const EditEvent: React.FC = () => {
       temCoffee: false,
       coffee: { cafe: false, agua: false, suco: false, bolo: false, salgados: false, frutas: false, biscoitos: false, obs: '' },
       detalhesCoffee: {},
-      materiais: { projetor: false, microfone: false, caixa_som: false, banner: false, tenda: false, mesas: false, cadeiras: false },
+      materiais: { projetor: false, microfone: false, caixa_som: false, banner: false, tenda: false, mesas: false, cadeiras: false, notebook: false, logistica: false, cafe: false, descartaveis_gerais: false },
       detalhesMateriais: {}
     }
   });
@@ -130,7 +130,11 @@ export const EditEvent: React.FC = () => {
             banner: mat?.banner || false,
             tenda: mat?.tenda || false,
             mesas: mat?.mesas || false,
-            cadeiras: mat?.cadeiras || false
+            cadeiras: mat?.cadeiras || false,
+            notebook: mat?.notebook || false,
+            logistica: mat?.logistica || false,
+            cafe: mat?.cafe || false,
+            descartaveis_gerais: mat?.descartaveis_gerais || false
           },
           detalhesCoffee: log?.detalhes || {},
           detalhesMateriais: mat?.detalhes || {}
@@ -218,6 +222,10 @@ export const EditEvent: React.FC = () => {
           tenda: data.materiais.tenda,
           mesas: data.materiais.mesas,
           cadeiras: data.materiais.cadeiras,
+          notebook: data.materiais.notebook,
+          logistica: data.materiais.logistica,
+          cafe: data.materiais.cafe,
+          descartaveis_gerais: data.materiais.descartaveis_gerais,
           detalhes: data.detalhesMateriais
         }, { onConflict: 'evento_id' });
 

@@ -31,16 +31,21 @@ export const eventoSchema = z.object({
 
   // Materiais
   materiais: z.object({
-    projetor: z.boolean(),
-    microfone: z.boolean(),
-    caixa_som: z.boolean(),
-    banner: z.boolean(),
-    tenda: z.boolean(),
-    mesas: z.boolean(),
-    cadeiras: z.boolean()
+    projetor: z.boolean().default(false),
+    microfone: z.boolean().default(false),
+    caixa_som: z.boolean().default(false),
+    banner: z.boolean().default(false),
+    tenda: z.boolean().default(false),
+    mesas: z.boolean().default(false),
+    cadeiras: z.boolean().default(false),
+    notebook: z.boolean().default(false),
+    logistica: z.boolean().default(false),
+    cafe: z.boolean().default(false),
+    descartaveis_gerais: z.boolean().default(false),
   }).default({
     projetor: false, microfone: false, caixa_som: false,
-    banner: false, tenda: false, mesas: false, cadeiras: false
+    banner: false, tenda: false, mesas: false, cadeiras: false,
+    notebook: false, logistica: false, cafe: false, descartaveis_gerais: false
   }),
   detalhesMateriais: z.record(z.string(), z.string()).default({})
 });

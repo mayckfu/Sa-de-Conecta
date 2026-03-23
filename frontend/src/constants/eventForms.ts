@@ -12,7 +12,10 @@ import {
   Image as ImageIcon,
   Tent,
   LayoutGrid,
-  Armchair
+  Armchair,
+  Laptop,
+  Warehouse,
+  Utensils
 } from 'lucide-react';
 
 export const coffeeItems = [
@@ -33,4 +36,8 @@ export const materiaisItems = [
   { id: 'tenda', name: 'Tenda', icon: Tent, color: 'text-amber-600', bg: 'bg-amber-50' },
   { id: 'mesas', name: 'Mesas', icon: LayoutGrid, color: 'text-slate-600', bg: 'bg-slate-50' },
   { id: 'cadeiras', name: 'Cadeiras', icon: Armchair, color: 'text-orange-600', bg: 'bg-orange-50' },
+  { id: 'notebook', name: 'Notebook', icon: Laptop, color: 'text-slate-700', bg: 'bg-slate-50' },
+  { id: 'logistica', name: 'Logística', icon: Warehouse, color: 'text-amber-600', bg: 'bg-amber-50' },
+  { id: 'cafe', name: 'Café', icon: Coffee, color: 'text-amber-600', bg: 'bg-amber-50' },
+  { id: 'descartaveis_gerais', name: 'Descartáveis Gerais', icon: Utensils, color: 'text-slate-500', bg: 'bg-slate-50' },
 ];

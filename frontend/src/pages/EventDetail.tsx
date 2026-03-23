@@ -19,7 +19,9 @@ import {
   Flag,
   Warehouse,
   Layout,
-  Trash2
+  Trash2,
+  Laptop,
+  Utensils
 } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import { cn } from '../utils/cn';
@@ -342,6 +344,10 @@ export const EventDetail: React.FC = () => {
                   { label: 'Tenda', status: evento.materiais?.[0]?.tenda, icon: Warehouse, key: 'tenda' },
                   { label: 'Mesas', status: evento.materiais?.[0]?.mesas, icon: Layout, key: 'mesas' },
                   { label: 'Cadeiras', status: evento.materiais?.[0]?.cadeiras, icon: Warehouse, key: 'cadeiras' },
+                  { label: 'Notebook', status: evento.materiais?.[0]?.notebook, icon: Laptop, key: 'notebook' },
+                  { label: 'Logística', status: evento.materiais?.[0]?.logistica, icon: Warehouse, key: 'logistica' },
+                  { label: 'Café', status: evento.materiais?.[0]?.cafe, icon: Coffee, key: 'cafe' },
+                  { label: 'Descartáveis Gerais', status: evento.materiais?.[0]?.descartaveis_gerais, icon: Utensils, key: 'descartaveis_gerais' },
                 ].map(item => (
                   <div key={item.label} className={cn(
                     "flex flex-col gap-1.5 py-2.5 px-3.5 rounded-xl border transition-all duration-200",
